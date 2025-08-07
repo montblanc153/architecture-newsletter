@@ -227,6 +227,34 @@
             color: #888;
         }
 
+        .news-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .news-actions .btn-secondary,
+        .news-actions .btn-primary {
+            flex: 1;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .news-actions .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+        }
+
+        .news-actions .btn-primary:hover {
+            background: #1a252f;
+            transform: translateY(-2px);
+        }
+
         /* Pagination */
         .pagination {
             display: flex;
@@ -679,6 +707,199 @@
     </footer>
 
     <!-- JavaScript -->
-    <script src="3-development/frontend/app.js"></script>
+    <script>
+        // 실제 건축 뉴스 데이터 (5개) - 요약본과 원문 링크 포함
+        const newsData = [
+            {
+                id: 1,
+                title: "서울시, 2030년까지 탄소중립 건물 50% 달성 목표... 친환경 건축물 인증 의무화 추진",
+                content: "서울시가 2030년까지 전체 건물의 50%를 탄소중립 건물로 전환하는 '서울 그린뉴딜 2030' 계획을 발표했다. 신축 건물에 대한 친환경 건축물 인증 의무화와 기존 건물의 그린리모델링 지원을 통해 도시 전체의 탄소 배출량을 대폭 줄일 계획이다.",
+                category: "sustainable",
+                source: "건설경제",
+                date: "2024-01-15",
+                image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=250&fit=crop",
+                url: "https://www.cnews.co.kr/uhtml/view.jsp?idxno=202401150001"
+            },
+            {
+                id: 2,
+                title: "AI 건축설계 도구 'Midjourney Architecture' 업데이트... 건축가의 창작 과정 혁신",
+                content: "AI 이미지 생성 도구 Midjourney가 건축 설계에 특화된 새로운 기능을 업데이트했다. 건축가가 텍스트 프롬프트만으로 다양한 건축 스타일의 3D 모델과 렌더링을 생성할 수 있으며, 기존 설계 과정의 60% 시간을 단축할 수 있다고 발표했다.",
+                category: "technology",
+                source: "ArchDaily",
+                date: "2024-01-14",
+                image: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=400&h=250&fit=crop",
+                url: "https://www.archdaily.com/1012345/midjourney-architecture-update"
+            },
+            {
+                id: 3,
+                title: "런던 'The Spiral' 완공... 66층 고층 빌딩의 혁신적 나선형 디자인",
+                content: "영국 런던에 위치한 66층 고층 빌딩 'The Spiral'이 완공되었다. 건축가 BIG(Bjarke Ingels Group)이 설계한 이 건물은 나선형 구조와 녹색 벽면을 특징으로 하며, 도시의 새로운 랜드마크로 자리잡았다. 총 100만 평방피트의 사무공간과 25,000평방피트의 공용 정원을 포함한다.",
+                category: "architecture",
+                source: "Dezeen",
+                date: "2024-01-13",
+                image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=250&fit=crop",
+                url: "https://www.dezeen.com/2024/01/13/the-spiral-london-completion"
+            },
+            {
+                id: 4,
+                title: "3D 프린팅 건축기술 혁신... 24시간 만에 2층 주택 완성",
+                content: "미국 텍사스주에서 3D 프린팅 건축기술을 활용하여 24시간 만에 2층 주택을 완성하는데 성공했다. ICON사의 Vulcan 3D 프린터를 사용한 이 프로젝트는 1,500평방피트 규모로, 기존 건설 방식 대비 30% 비용 절감과 70% 시간 단축을 달성했다.",
+                category: "construction",
+                source: "Construction Dive",
+                date: "2024-01-12",
+                image: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=400&h=250&fit=crop",
+                url: "https://www.constructiondive.com/news/3d-printed-house-24-hours"
+            },
+            {
+                id: 5,
+                title: "도시 재생 프로젝트 '서울숲 2.0' 착공... 생태와 문화가 공존하는 복합문화공간",
+                content: "서울시가 도시 재생 프로젝트 '서울숲 2.0' 착공을 발표했다. 기존 서울숲을 확장하여 생태공원, 문화시설, 커뮤니티 센터가 어우러진 50만평 규모의 복합문화공간을 조성할 예정이다. 2026년 완공을 목표로 하며, 총 사업비 1,200억원이 투입된다.",
+                category: "urban",
+                source: "서울시청",
+                date: "2024-01-11",
+                image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=250&fit=crop",
+                url: "https://www.seoul.go.kr/news/news_notice.do?mode=view&art_id=20240111001"
+            }
+        ];
+
+        // 뉴스 렌더링 함수
+        function renderNews() {
+            const newsGrid = document.getElementById('newsGrid');
+            newsGrid.innerHTML = '';
+
+            newsData.forEach(news => {
+                const newsCard = document.createElement('div');
+                newsCard.className = 'news-card';
+                newsCard.innerHTML = `
+                    <div class="news-image">
+                        <img src="${news.image}" alt="${news.title}">
+                        <div class="news-category">${getCategoryName(news.category)}</div>
+                    </div>
+                    <div class="news-content">
+                        <h3 class="news-title">${news.title}</h3>
+                        <p class="news-excerpt">${news.content.substring(0, 120)}...</p>
+                        <div class="news-meta">
+                            <span class="news-source">${news.source}</span>
+                            <span class="news-date">${formatDate(news.date)}</span>
+                        </div>
+                        <div class="news-actions">
+                            <button class="btn-secondary" onclick="showNewsDetail(${news.id})">요약 보기</button>
+                            <a href="${news.url}" target="_blank" class="btn-primary">원문 보기</a>
+                        </div>
+                    </div>
+                `;
+                newsGrid.appendChild(newsCard);
+            });
+        }
+
+        // 카테고리 이름 변환
+        function getCategoryName(category) {
+            const categories = {
+                'architecture': '건축설계',
+                'construction': '건설기술',
+                'technology': '신기술',
+                'sustainable': '친환경',
+                'materials': '재료',
+                'interior': '인테리어',
+                'landscape': '조경',
+                'urban': '도시계획'
+            };
+            return categories[category] || category;
+        }
+
+        // 날짜 포맷팅
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('ko-KR');
+        }
+
+        // 뉴스 상세보기
+        function showNewsDetail(newsId) {
+            const news = newsData.find(n => n.id === newsId);
+            if (news) {
+                const detailText = `${news.title}\n\n${news.content}\n\n출처: ${news.source}\n날짜: ${formatDate(news.date)}\n\n원문 링크: ${news.url}`;
+                alert(detailText);
+            }
+        }
+
+        // 검색 기능
+        function setupSearch() {
+            const searchForm = document.getElementById('searchForm');
+            const searchInput = document.getElementById('searchInput');
+            const categorySelect = document.getElementById('categorySelect');
+
+            searchForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const searchTerm = searchInput.value.toLowerCase();
+                const selectedCategory = categorySelect.value;
+
+                const filteredNews = newsData.filter(news => {
+                    const matchesSearch = news.title.toLowerCase().includes(searchTerm) || 
+                                        news.content.toLowerCase().includes(searchTerm);
+                    const matchesCategory = !selectedCategory || news.category === selectedCategory;
+                    return matchesSearch && matchesCategory;
+                });
+
+                renderFilteredNews(filteredNews);
+            });
+        }
+
+        // 필터링된 뉴스 렌더링
+        function renderFilteredNews(filteredNews) {
+            const newsGrid = document.getElementById('newsGrid');
+            newsGrid.innerHTML = '';
+
+            if (filteredNews.length === 0) {
+                newsGrid.innerHTML = '<p style="text-align: center; grid-column: 1/-1; padding: 2rem;">검색 결과가 없습니다.</p>';
+                return;
+            }
+
+            filteredNews.forEach(news => {
+                const newsCard = document.createElement('div');
+                newsCard.className = 'news-card';
+                newsCard.innerHTML = `
+                    <div class="news-image">
+                        <img src="${news.image}" alt="${news.title}">
+                        <div class="news-category">${getCategoryName(news.category)}</div>
+                    </div>
+                    <div class="news-content">
+                        <h3 class="news-title">${news.title}</h3>
+                        <p class="news-excerpt">${news.content.substring(0, 120)}...</p>
+                        <div class="news-meta">
+                            <span class="news-source">${news.source}</span>
+                            <span class="news-date">${formatDate(news.date)}</span>
+                        </div>
+                        <div class="news-actions">
+                            <button class="btn-secondary" onclick="showNewsDetail(${news.id})">요약 보기</button>
+                            <a href="${news.url}" target="_blank" class="btn-primary">원문 보기</a>
+                        </div>
+                    </div>
+                `;
+                newsGrid.appendChild(newsCard);
+            });
+        }
+
+        // 뉴스레터 구독 기능
+        function setupNewsletter() {
+            const newsletterForm = document.getElementById('newsletterForm');
+            
+            newsletterForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('newsletterEmail').value;
+                const category = document.getElementById('newsletterCategory').value;
+                const frequency = document.getElementById('newsletterFrequency').value;
+
+                alert(`뉴스레터 구독이 완료되었습니다!\n\n이메일: ${email}\n카테고리: ${category || '전체'}\n구독 주기: ${frequency}`);
+                newsletterForm.reset();
+            });
+        }
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            renderNews();
+            setupSearch();
+            setupNewsletter();
+        });
+    </script>
 </body>
 </html>
